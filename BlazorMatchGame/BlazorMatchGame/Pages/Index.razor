@@ -1,0 +1,77 @@
+﻿@page "/"
+<style>
+    .container {
+        width: 400px;
+    }
+
+    button {
+        width: 100px;
+        height: 100px;
+        font-size: 50px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        @foreach (var animal in shuffledAnimals)
+        {
+            <div class="col-3">
+                <button type="button" @onclick="@(() => ButtonClick(animal,""))" class="btn btn-outline-dark">
+                    <h1>@animal</h1>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@code
+{
+    List<string> animalEmoji = new List<string>()
+{
+        "🐶","🐶",
+        "🐱","🐱",
+        "🦊","🦊",
+        "🐮","🐮",
+        "🐺","🐺",
+        "🐭","🐭",
+        "🦁","🦁",
+        "🐯","🐯"
+    };
+
+    List<string> shuffledAnimals = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        SetUpGame();
+    }
+
+    private void SetUpGame()
+    {
+        Random random = new Random();
+        shuffledAnimals = animalEmoji
+        .OrderBy(item => random.Next())
+        .ToList();
+    }
+
+    string lastAnimalFound = string.Empty;
+    string lastDescription = string.Empty;
+    private void ButtonClick(string animal, string animalDescription)
+    {
+        if (lastAnimalFound == string.Empty)
+        {
+            lastAnimalFound = animal;
+            lastDescription = animalDescription;
+        }
+        else if (lastAnimalFound == animal)
+        {
+            lastAnimalFound = string.Empty;
+            shuffledAnimals = shuffledAnimals
+            .Select(a => a.Replace(animal, string.Empty))
+            .ToList();
+        }
+        else
+        {
+            lastAnimalFound = string.Empty;
+        }
+    }
+
+}
