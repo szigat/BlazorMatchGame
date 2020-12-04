@@ -1,4 +1,6 @@
-﻿@page "/"
+﻿@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+
+@page "/"
 
 @using System.Timers
 
@@ -32,6 +34,9 @@
     <div class="row">
         <h2>Time: @timeDisplay</h2>
     </div>
+    <div class="row">
+        <h2>Best time: @bestTime</h2>
+    </div>
 </div>
 
 @code
@@ -53,6 +58,8 @@
     Timer timer;
     int tenthsOfSecondsElapsed = 0;
     string timeDisplay;
+    double bestTime;
+    double currentTime;
 
     protected override void OnInitialized()
     {
@@ -70,6 +77,10 @@
 
         matchesFound = 0;
         tenthsOfSecondsElapsed = 0;
+        if (localStorage.ContainKey("BestTime"))
+        {
+            bestTime = localStorage.GetItem<double>("BestTime");
+        }
     }
 
     string lastAnimalFound = string.Empty;
@@ -95,7 +106,13 @@
                 timer.Stop();
                 timeDisplay += " - Play Again?";
 
+                double currentTime = tenthsOfSecondsElapsed / 10.0;
+                if (currentTime < bestTime || bestTime == 0)
+                {
+                    localStorage.SetItem("BestTime", currentTime);
+                }
                 SetUpGame();
+
             }
         }
         else
